@@ -1,38 +1,34 @@
 import React from "react";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 
 class App extends React.Component{
-  constructor(props){
-    super(props);
-    console.log("hello");
+    state = {
+      isLoading : true ,
+      movies : []
+    };
+    getMovies =async () =>{
+      const {
+        data:{
+          data:{
+            movies
+          }
+        }
+      } = await axios.get("https://yts.mx/api/v2/list_movies.json");
+      this.setState({movies:movies}) //state에 있는 movies : axios에서 가져온 movies
+    }
+    componentDidMount(){
+     this.getMovies();
   }
-  state = {
-    count : 0
-  };
-  add = () => {
-    this.setState(current => ({count:current.count +1}));
-  };
-  minus = () => {
-    this.setState(current => ({count:current.count -1}));
-  };
-  componentDidMount(){
-    console.log("component rendered");
+    render(){
+     const{isLoading} =this.state;
+     return<div>{isLoading ? "Loading..." : "We are ready"}</div>
+    }
+      
   }
   
-  componentDidUpdate(){
-    console.log("I just updated");
-  }//컴포넌트 업데이트가 있을때만 출력
-  render(){
-    return(
-      <div>
-        <h1>The number is : {this.state.count}</h1>
-        <button onClick = {this.add}>Add</button>
-        <button onClick = {this.minus}>Minus</button>
-      </div>
-    )
-  }
-    
-};
+
+ 
 
 export default App;
