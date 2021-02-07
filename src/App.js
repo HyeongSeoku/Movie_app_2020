@@ -1,23 +1,41 @@
 import React from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
-import { render } from "@testing-library/react";
+import Movie from "./Movie"
 
-class App extends React.Component{
+class App extends React.Component {
   state = {
-    count:0,
+    isLoading: true,
+    movies: []
   };
-  add = () => {
-    this.setState({count:this.state.count+1});   //setState => state안의 값 변경 this.state로 변경시 직접변경 오류 뜸
-  };
-  minus = () => {
-    this.setState({count:this.state.count-1});   //this.state.count : 현재 카운트 값
+  getMovie = async () => {
+    const { data:
+      { data:
+        { movies }    //state의 이름과 받아오는 데이터의 객체 이름인 movies가 같기때문에 가능
+      }
+    } = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json?sort_by=rating");
+    //axios.get은 완료되기 까지 시간이 필요하기 때문에 await 처리 (async 필수)
+    this.setState({ movies, isLoading: false });
   }
-  render(){
-    return <div>
-      <h1>The number is {this.state.count}</h1>
-      <button onClick={this.add}>Add</button>
-      <button onClick ={this.minus}>Minus</button>
+  componentDidMount() {
+    this.getMovie();
+  }
+  render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <div>
+      {isLoading ? "Loading..." : movies.map(movie => (
+        <Movie
+          key={movie.id}
+          id={movie.id}
+          year={movie.year}
+          title={movie.title}
+          summary={movie.summary}
+          poster={movie.medium_cover_image}
+        />
+      ))}
     </div>
+    );
   }
 }
 
